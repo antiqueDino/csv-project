@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <form id="myForm">
+      <input type="file" id="csvFile" accept=".csv" />
+      <br />
+      <input type="submit" value="Submit" />
+    </form>
+  </body>
+</html>
+
+<script type="text/javascript">
+
+  var results = [];
+  var headers = [];
+
+  // listen the form's submit
+  const myForm = document.getElementById("myForm");
+  const csvFile = document.getElementById("csvFile");
+
+  myForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const input = csvFile.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const text = e.target.result;
+      // document.write(text);
+
+      const data = csvToArray(text);
+      const jsonData = JSON.stringify(data);
+      // console.log(jsonData);
+      console.log(data[0][headers[0]]);
+      document.write(JSON.stringify(data));
+    };
+
+    reader.readAsText(input);
+  });
+
+  function csvToArray(str, delimiter = ",") {
+  // slice from start of text to the first \n index
+  // use split to create an array from string by delimiter
+  headers = str.slice(0, str.indexOf("\n")).split(delimiter);
+
+  // slice from \n index + 1 to the end of the text
+  // use split to create an array of each csv value row
+  const rows = str.slice(str.indexOf("\n") + 1).split("\n");
+
+  // Map the rows
+  // split values from each row into an array
+  // use headers.reduce to create an object
+  // object properties derived from headers:values
+  // the object passed as an element of the array
+  const arr = rows.map(function (row) {
+    const values = row.split(delimiter);
+
+    const el = headers.reduce(function (object, header, index) {
+      object[header] = values[index];
+      return object;
+    }, {});
+    return el;
+  });
+
+  // return the array
+  return arr;
+}
+
+</script>
