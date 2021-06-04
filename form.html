@@ -10,6 +10,15 @@
       <br />
       <input type="submit" value="Submit" />
     </form>
+    <div id="csv"></div>
+     <button class="operation" type="button" style="display: none" onclick="sum();">Somme</button>
+     <button class="operation" type="button" style="display: none" onclick="average();">Moyenne</button>
+     <button class="operation" type="button" style="display: none" onclick="median();">Médiane</button>
+     <div class="">
+       <p id="sum"></p>
+       <p id="average"></p>
+       <p id="median"></p>
+     </div>
   </body>
 </html>
 
@@ -17,6 +26,7 @@
 
   var results = [];
   var headers = [];
+  var numInCsv = [];
 
   // listen the form's submit
   const myForm = document.getElementById("myForm");
@@ -35,7 +45,11 @@
       const jsonData = JSON.stringify(data);
       // console.log(jsonData);
       console.log(data[0][headers[0]]);
-      document.write(JSON.stringify(data));
+      document.getElementById('csv').innerText = JSON.stringify(data);
+      // document.getElementById('operation').style.display = "inline-block";
+      showBtn("operation");
+      // document.write(JSON.stringify(data));
+      console.log(numInCsv);
     };
 
     reader.readAsText(input);
@@ -57,6 +71,14 @@
   // the object passed as an element of the array
   const arr = rows.map(function (row) {
     const values = row.split(delimiter);
+    // numInCsv = values.filter(num => !isNaN(num));
+
+    for (var i = 0; i < values.length; i++) {
+      if (!isNaN(values[i]) && values[i] !== "") {
+        numInCsv.push(parseInt(values[i]));
+        console.log(!isNaN(values[i]), values[i], typeof values[i]);
+      }
+    }
 
     const el = headers.reduce(function (object, header, index) {
       object[header] = values[index];
@@ -66,7 +88,42 @@
   });
 
   // return the array
+
   return arr;
+}
+
+function showBtn(selector) {
+  var all = document.getElementsByClassName(selector);
+  for (var i = 0; i < all.length; i++) {
+    all[i].style.display = 'inline-block';
+  }
+}
+
+function sum() {
+  document.getElementById('sum').innerText = "Somme = " + numInCsv.reduce((a,b) => a + b, 0) ;
+}
+
+function average() {
+  document.getElementById('average').innerText = "Moyenne = " + (numInCsv.reduce((a,b) => a + b, 0) / numInCsv.length) ;
+}
+
+function median() {
+  document.getElementById('median').innerText = "Médiane = " + calculateMedian() ;
+}
+
+function calculateMedian(){
+  if(numInCsv.length ===0) return 0;
+
+  numInCsv.sort(function(a,b){
+    return a-b;
+  });
+
+  var half = Math.floor(numInCsv.length / 2);
+
+  if (numInCsv.length % 2)
+    return numInCsv[half];
+
+  return (numInCsv[half - 1] + numInCsv[half]) / 2.0;
 }
 
 </script>
