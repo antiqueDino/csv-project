@@ -14,10 +14,10 @@
      <button class="operation" type="button" style="display: none" onclick="sum();">Somme</button>
      <button class="operation" type="button" style="display: none" onclick="average();">Moyenne</button>
      <button class="operation" type="button" style="display: none" onclick="median();">Médiane</button>
-     <div class="">
-       <p id="sum"></p>
-       <p id="average"></p>
-       <p id="median"></p>
+     <div >
+       <p class="results" id="sum"></p>
+       <p class="results" id="average"></p>
+       <p class="results" id="median"></p>
      </div>
   </body>
 </html>
@@ -35,6 +35,16 @@
   myForm.addEventListener("submit", function (e) {
     e.preventDefault();
     const input = csvFile.files[0];
+    var type = input.type;
+    console.log(input.type);
+
+    if (input.type !== "text/csv") {
+      alert("fichier invalide! que des fichiers csv!");
+      return ;
+    }
+
+    hide("results");
+
     const reader = new FileReader();
 
     reader.onload = function (e) {
@@ -44,12 +54,12 @@
       const data = csvToArray(text);
       const jsonData = JSON.stringify(data);
       // console.log(jsonData);
-      console.log(data[0][headers[0]]);
+      // console.log(data[0][headers[0]]);
       document.getElementById('csv').innerText = JSON.stringify(data);
       // document.getElementById('operation').style.display = "inline-block";
       showBtn("operation");
       // document.write(JSON.stringify(data));
-      console.log(numInCsv);
+      // console.log(numInCsv);
     };
 
     reader.readAsText(input);
@@ -76,7 +86,7 @@
     for (var i = 0; i < values.length; i++) {
       if (!isNaN(values[i]) && values[i] !== "") {
         numInCsv.push(parseInt(values[i]));
-        console.log(!isNaN(values[i]), values[i], typeof values[i]);
+        // console.log(!isNaN(values[i]), values[i], typeof values[i]);
       }
     }
 
@@ -99,15 +109,25 @@ function showBtn(selector) {
   }
 }
 
+function hide(selector) {
+  var all = document.getElementsByClassName(selector);
+  for (var i = 0; i < all.length; i++) {
+    all[i].style.display = 'none';
+  }
+}
+
 function sum() {
+  showBtn("results");
   document.getElementById('sum').innerText = "Somme = " + numInCsv.reduce((a,b) => a + b, 0) ;
 }
 
 function average() {
+  showBtn("results");
   document.getElementById('average').innerText = "Moyenne = " + (numInCsv.reduce((a,b) => a + b, 0) / numInCsv.length) ;
 }
 
 function median() {
+  showBtn("results");
   document.getElementById('median').innerText = "Médiane = " + calculateMedian() ;
 }
 
