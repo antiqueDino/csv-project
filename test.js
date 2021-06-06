@@ -51,7 +51,7 @@ readline.question(`Enter your file name: `, name => {
             }
           }
         }
-        console.log("Sum = " + sum + " Average = " + (sum / numFound) + " Mediane = "+calculateMedian());
+        console.log("Sum = " + sum + " Average = " + (sum / numFound) + " Mediane = "+calculateMedian() + " Max = "+Math.max.apply(null, numInCsv));
     });
   } else {
     console.log("Incorrect type of file!");

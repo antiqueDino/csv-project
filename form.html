@@ -14,11 +14,13 @@
       <button class="operation" type="button" style="display: none" onclick="sum();">Somme</button>
       <button class="operation" type="button" style="display: none" onclick="average();">Moyenne</button>
       <button class="operation" type="button" style="display: none" onclick="median();">Médiane</button>
+      <button class="operation" type="button" style="display: none" onclick="valMax();">Max</button>
     </div>
      <div id="opResults">
        <p class="results" id="sum"></p>
        <p class="results" id="average"></p>
        <p class="results" id="median"></p>
+       <p class="results" id="max"></p>
      </div>
   </body>
 </html>
@@ -156,6 +158,11 @@ function average() {
 function median() {
   showBtn("results");
   document.getElementById('median').innerText = "Médiane = " + calculateMedian() ;
+}
+
+function valMax() {
+  showBtn("results");
+  document.getElementById('max').innerText = "Max = " + Math.max.apply(null, numInCsv) ;
 }
 
 function calculateMedian(){
