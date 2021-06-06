@@ -10,11 +10,12 @@
       <br />
       <input type="submit" value="Submit" />
     </form>
-    <div id="csv"></div>
-     <button class="operation" type="button" style="display: none" onclick="sum();">Somme</button>
-     <button class="operation" type="button" style="display: none" onclick="average();">Moyenne</button>
-     <button class="operation" type="button" style="display: none" onclick="median();">Médiane</button>
-     <div >
+    <div class="csv">
+      <button class="operation" type="button" style="display: none" onclick="sum();">Somme</button>
+      <button class="operation" type="button" style="display: none" onclick="average();">Moyenne</button>
+      <button class="operation" type="button" style="display: none" onclick="median();">Médiane</button>
+    </div>
+     <div id="opResults">
        <p class="results" id="sum"></p>
        <p class="results" id="average"></p>
        <p class="results" id="median"></p>
@@ -32,6 +33,7 @@
   const myForm = document.getElementById("myForm");
   const csvFile = document.getElementById("csvFile");
 
+
   myForm.addEventListener("submit", function (e) {
     e.preventDefault();
     const input = csvFile.files[0];
@@ -45,6 +47,18 @@
 
     hide("results");
 
+    let table = document.querySelector("table");
+    if (table) {
+      console.log(table);
+      table.remove();
+      console.log("removed");
+    }
+
+    let results = document.getElementById("opResults");
+    let parentResults = results.parentNode;
+    var tbl = document.createElement('table');
+    parentResults.insertBefore(tbl,results);
+
     const reader = new FileReader();
 
     reader.onload = function (e) {
@@ -52,14 +66,23 @@
       // document.write(text);
 
       const data = csvToArray(text);
+      // console.log(data[data.length -1]);
       const jsonData = JSON.stringify(data);
       // console.log(jsonData);
       // console.log(data[0][headers[0]]);
-      document.getElementById('csv').innerText = JSON.stringify(data);
+      // document.getElementById('csv').innerText = JSON.stringify(data);
       // document.getElementById('operation').style.display = "inline-block";
       showBtn("operation");
       // document.write(JSON.stringify(data));
       // console.log(numInCsv);
+      // show csv in table
+
+      let table = document.querySelector("table");
+      let tableData = Object.keys(data[0]);
+
+      generateTableHead(table, tableData);
+      generateTable(table, data);
+      // table.id += csvFile.files[0].name;
     };
 
     reader.readAsText(input);
@@ -123,7 +146,11 @@ function sum() {
 
 function average() {
   showBtn("results");
-  document.getElementById('average').innerText = "Moyenne = " + (numInCsv.reduce((a,b) => a + b, 0) / numInCsv.length) ;
+  var moyenne = ((numInCsv.reduce((a,b) => a + b, 0)) <= 0) ? 0 : (numInCsv.reduce((a,b) => a + b, 0)/numInCsv.length);
+  // if (numInCsv.reduce((a,b) => a + b, 0) > 0) {
+    document.getElementById('average').innerText = "Moyenne = " + moyenne ;
+  // }
+  console.log(typeof moyenne, moyenne);
 }
 
 function median() {
@@ -145,5 +172,28 @@ function calculateMedian(){
 
   return (numInCsv[half - 1] + numInCsv[half]) / 2.0;
 }
+
+function generateTableHead(table, data) {
+  let thead = table.createTHead();
+  let row = thead.insertRow();
+  for (let key of data) {
+    let th = document.createElement("th");
+    let text = document.createTextNode(key);
+    th.appendChild(text);
+    row.appendChild(th);
+  }
+}
+
+function generateTable(table, data) {
+  for (let element of data) {
+    let row = table.insertRow();
+    for (key in element) {
+      let cell = row.insertCell();
+      let text = document.createTextNode(element[key]);
+      cell.appendChild(text);
+    }
+  }
+}
+
 
 </script>
